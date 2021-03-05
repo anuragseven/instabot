@@ -66,4 +66,25 @@ def set_last_published_pic_serial(client, serial):
     client.close()
 
 
-set_last_published_pic_serial(get_db_client(), '7')
+def get_last_published_pic_serial(client):
+    collection = client.get_database('datahunkbot').get_collection('instabot')
+    response = collection.find_one({'description': 'maintains_last_published_pic_serial'})
+    return response['last_pic_serial']
+
+
+def get_pic_using_serial(client, serial):
+    collection = client.get_database('datahunkbot').get_collection('instabot')
+    response = collection.find_one(
+        {
+            "description": "contents_for_publishing"},
+        {'pics':
+             {'$elemMatch':
+                  {'serial': serial}
+              }
+         }
+    )
+    return response['pics'][0]
+
+
+
+
